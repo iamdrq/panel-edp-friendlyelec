@@ -1,0 +1,165 @@
+/dts-v1/;
+/plugin/;
+
+/ {
+  compatible = "rockchip,rk3399";
+	
+  fragment@0 {
+    target-path="/";
+    __overlay__ {
+      backlight: backlight {
+			compatible = "pwm-backlight";
+			brightness-levels = <
+				 0   1   2   3   4   5   6   7
+				 8   9  10  11  12  13  14  15
+				 16  17  18  19  20  21  22  23
+				 24  25  26  27  28  29  30  31
+				 32  33  34  35  36  37  38  39
+				 40  41  42  43  44  45  46  47
+				 48  49  50  51  52  53  54  55
+				 56  57  58  59  60  61  62  63
+				 64  65  66  67  68  69  70  71
+				 72  73  74  75  76  77  78  79
+				 80  81  82  83  84  85  86  87
+				 88  89  90  91  92  93  94  95
+				 96  97  98  99 100 101 102 103
+				104 105 106 107 108 109 110 111
+				112 113 114 115 116 117 118 119
+				120 121 122 123 124 125 126 127
+				128 129 130 131 132 133 134 135
+				136 137 138 139 140 141 142 143
+				144 145 146 147 148 149 150 151
+				152 153 154 155 156 157 158 159  
+  				160 161 162 163 164 165 166 167
+				168 169 170 171 172 173 174 175
+				176 177 178 179 180 181 182 183
+				184 185 186 187 188 189 190 191
+				192 193 194 195 196 197 198 199
+				200 201 202 203 204 205 206 207
+				208 209 210 211 212 213 214 215
+				216 217 218 219 220 221 222 223
+				224 225 226 227 228 229 230 231
+				232 233 234 235 236 237 238 239
+				240 241 242 243 244 245 246 247
+				248 249 250 251 252 253 254 255>;
+				default-brightness-level = <200>;
+				pwms = <&pwm0 0 25000 0>;
+		};
+                    
+      	vcc_lcd: vcc-lcd {
+		compatible = "regulator-fixed";
+		regulator-name = "vcc_lcd";
+		gpio = <&gpio4 30 0>;
+		startup-delay-us = <20000>;
+		enable-active-high;
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		regulator-boot-on;
+		vin-supply = <&vcc5v0_sys>;
+	};
+
+	edp_panel: edp-panel {
+			compatible = "friendlyelec,k116e";
+			backlight = <&backlight>;
+			enable-gpios = <&gpio4 29 0>;	// SOM BL_EN GPIO4_D5
+			power-supply = <&vcc_lcd>;
+			no-hpd;
+
+			port {
+				panel_in_edp: endpoint {
+					remote-endpoint = <&edp_out_panel>;
+				};
+			};
+
+			/*panel-timing {
+                            clock-frequency = <129360000>;
+                            hactive = <1920>;
+                            vactive = <1080>;
+                            hback-porch = <80>;
+                            hfront-porch = <48>;
+                            vback-porch = <23>;
+                            vfront-porch = <3>;
+                            hsync-len = <32>;
+                            vsync-len = <5>;
+
+                            hsync-active = <1>;
+                            vsync-active = <1>;
+                    	};*/
+
+		};             
+    };                
+  };
+  
+  fragment@1 {
+    target=<&edp>;
+    __overlay__ {
+      
+      status = "okay";
+  		force-hpd;
+		ports {
+			edp_out: port@1 {
+      		        reg = <1>;
+          		#address-cells = <1>;
+ 	                #size-cells = <0>;
+
+	                  edp_out_panel: endpoint@0 {
+        	            reg = <0>;
+                	    remote-endpoint = <&panel_in_edp>;
+              		  };
+			};
+		};
+    };
+  };
+ 
+  fragment@2 {
+    target=<&i2c4>;
+    __overlay__ {
+       status = "okay";
+			ts@38{
+              compatible = "edt,edt-ft5506";
+              reg = <0x38>;
+              interrupt-parent = <&gpio1>;
+              interrupts = <20 2>;
+              irq-gpios = <&gpio1 20 2>;
+              reset-gpios = <&gpio1 13 1>;
+              touchscreen-size-x = <1920>;
+              touchscreen-size-y = <1080>;
+         };
+    };
+  };
+  
+  fragment@3 {
+    target=<&vopl>;
+    __overlay__ {
+      status = "okay";
+    };
+  };
+
+  fragment@4 {
+    target=<&vopl_mmu>;
+    __overlay__ {
+      status = "okay";
+    };
+  };
+  
+  fragment@5 {
+    target=<&vopb>;
+    __overlay__ {
+      status = "okay";
+    };
+  };
+
+  fragment@6 {
+    target=<&vopb_mmu>;
+    __overlay__ {
+      status = "okay";
+    };
+  };
+
+  fragment@7 {
+    target=<&edp_hpd>;
+    __overlay__ {
+      rockchip,pins = <0x04 0x19 0x02 &pcfg_pull_none>;
+    };
+  };
+};
