@@ -93,7 +93,14 @@
   fragment@1 {
     target=<&edp>;
     __overlay__ {
-      
+
+      /*
+	 * eDP PHY/clk don't sync reliably at anything other than 24 MHz. Only
+	 * set this here, because rk3399-gru.dtsi ensures we can generate this
+	 * off GPLL=600MHz, whereas some other RK3399 boards may not.
+	 */
+	assigned-clocks = <&cru 362>;//PCLK_EDP
+	assigned-clock-rates = <24000000>;
       status = "okay";
   		force-hpd;
 		ports {
