@@ -9,4 +9,4 @@ make install
 ```
 
 - ~~The K116E drm_display_mode 's clock not to 60Hz, reason unknown, if clock is 60Hz, panel will blank.~~
-- Notice: now only support K116E and Linux 6.x
+- Notice: now only support K116E and Armbian Linux 6.1.x
