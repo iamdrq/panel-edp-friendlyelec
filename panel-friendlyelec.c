@@ -936,7 +936,7 @@ static void panel_edp_shutdown(struct device* dev)
 }
 
 static const struct drm_display_mode friendlyelec_k116e_mode = {
-				.clock = 115500,
+				.clock = 138652,
 				.hdisplay = 1920,
 				.hsync_start = 1920 + 48,
 				.hsync_end = 1920 + 48 + 32,
